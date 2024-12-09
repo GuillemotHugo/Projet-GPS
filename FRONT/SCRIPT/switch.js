@@ -52,9 +52,22 @@ document.getElementById('Register').addEventListener('click', function() {
 document.getElementById('MainPage').addEventListener('click', function() {
     changeContenu(`
         <div class="MainDiv">
-                <p class="MainTitle"><strong>Position GPS</strong></p>
-                
+            <p class="MainTitle"><strong>Position GPSsss</strong></p>
+            <div id="map" style="height: 400px; width: 100%;"></div>
         </div>
     `);
+
+    // Initialiser la carte après que le DOM ait été mis à jour
+    const map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées GPS (Paris)
+
+    // Ajouter les tuiles OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Ajouter un marqueur sur la carte
+    const marker = L.marker([48.8566, 2.3522]).addTo(map);
+    marker.bindPopup("<b>Position GPS</b><br>Latitude: 48.8566<br>Longitude: 2.3522").openPopup();
+
 });
 
