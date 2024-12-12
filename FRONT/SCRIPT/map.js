@@ -19,3 +19,30 @@ document.getElementById('addMarkerBtn').addEventListener('click', function() {
     alert("Please enter valid latitude and longitude values.");
     }
 });
+
+async function getCoordinates() {
+    try {
+        const response = await fetch('http://192.168.65.77:3000/getCoordinates', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            addMarker(data.latitude, data.longitude);
+        } else {
+            console.log('Erreur lors de la récupération des coordonnées', response);
+        }
+    } catch (e) {
+        console.log("Erreur lors de l'envoi de la requête\nErreur : ", e);
+    }
+}
+
+/*while(true) {
+    getCoordinates()
+    setTimeout(5000);
+}*/
+getCoordinates()

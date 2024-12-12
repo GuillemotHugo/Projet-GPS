@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
+const { connection } = require('mongoose');
 
 // INITIALISATION DE L'APPLICATION EXPRESS
 const app = express();
@@ -47,28 +48,28 @@ app.post('/register', async (req, res) => {
     if (!identifiant || !password) {
       return res.status(400).json({ error: 'Les champs identifiant et password sont requis.' });
     }
-
+    
     const userExistsQuery = 'SELECT * FROM User WHERE identifiant = ?';
     db.query(userExistsQuery, [identifiant], async (err, results) => {
       if (err) {
         console.error('Erreur lors de la vérification de l\'existence de l\'utilisateur :', err);
         return res.status(500).json({ error: 'Erreur interne du serveur.1' });
       }
-
+      
       if (results.length > 0) {
         return res.status(400).json({ error: 'Cet utilisateur existe déjà.' });
       }
-
+      
       const hashedPassword = await bcrypt.hash(password, 10);
       const userUUID = uuidv4();
-
+      
       const insertUserQuery = 'INSERT INTO User (identifiant, password, uuid) VALUES (?, ?, ?)';
       db.query(insertUserQuery, [identifiant, hashedPassword, userUUID], (insertErr) => {
         if (insertErr) {
           console.error('Erreur lors de l\'enregistrement de l\'utilisateur :', insertErr);
           return res.status(500).json({ error: 'Erreur interne du serveur.2' });
         }
-
+        
         res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
         console.log("Création d'un utilisateur.");
       });
@@ -83,21 +84,21 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { identifiant, password } = req.body;
-
+    
     const query = 'SELECT * FROM User WHERE identifiant = ?';
     db.query(query, [identifiant], async (err, results) => {
       if (err) {
         console.error('Erreur lors de la requête à la base de données :', err);
         return res.status(500).json({ message: 'Erreur du serveur' });
       }
-
+      
       if (results.length > 0) {
         const user = results[0];
         const match = await bcrypt.compare(password, user.password);
-
+        
         if (match) {
           const userUUID = user.uuid;
-
+          
           res.cookie('userUUID', userUUID, { httpOnly: true });
           res.status(200).json({ message: 'Connexion réussie', userUUID });
           console.log("Connexion à un compte effectuée");
@@ -114,28 +115,45 @@ app.post('/login', async (req, res) => {
   }
 });
 
-  //GetUser
+app.get('/getCoordinates', (req, res) => {
+  const sql = `SELECT latitude, longitude FROM coordinates WHERE id = (SELECT max(id) FROM coordinates)`
 
-  app.get('/getUsername', (req, res) => {
-    const uuid = req.cookies.UUID;
-  
-    // Requête SQL pour récupérer l'identifiant à partir de l'UUID
-    const sql = `SELECT identifiant FROM User WHERE uuid = ?`;
-    connection.query(sql, [uuid], (err, result) => {
-      if (err) {
-        console.error('Erreur lors de l\'exécution de la requête SQL :', err);
-        res.status(500).send('Une erreur s\'est produite lors de la récupération de l\'identifiant');
-        return;
-      }
-      if (result.length === 0) {
-        res.status(404).send('Aucun utilisateur trouvé pour cet UUID');
-        return;
-      }
-      const username = result[0].identifiant;
-      res.send({ username });
+  connection.query(sql , (err, result) => {
+    if(err)
+    {
+      console.error('Erreur lors de la récupération des coordonnées\nErreur : ', err);
+      res.status(500).send('Erreur lors de la récupération des coordonnées');
+      return;
+    }
+
+    res.status(200).json({
+      latitude : result[0],
+      longitude : result[1]
     });
-  });
+  })
+})
+
+//GetUser
+app.get('/getUsername', (req, res) => {
+  const uuid = req.cookies.UUID;
   
+  // Requête SQL pour récupérer l'identifiant à partir de l'UUID
+  const sql = `SELECT identifiant FROM User WHERE uuid = ?`;
+  connection.query(sql, [uuid], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de l\'exécution de la requête SQL :', err);
+      res.status(500).send('Une erreur s\'est produite lors de la récupération de l\'identifiant');
+      return;
+    }
+    if (result.length === 0) {
+      res.status(404).send('Aucun utilisateur trouvé pour cet UUID');
+      return;
+    }
+    const username = result[0].identifiant;
+    res.send({ username });
+  });
+});
+
 // LANCEMENT DU SERVEUR
 app.listen(port, () => {
   console.log(`Serveur en cours d'exécution sur le port ${port}`);
