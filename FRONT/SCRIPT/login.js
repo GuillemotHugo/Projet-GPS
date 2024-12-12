@@ -15,7 +15,7 @@ async function submitLogin() {
     passwordInput.value = '';
     
     try {
-        const response = await fetch('http://192.168.65.211:3000/login', {
+        const response = await fetch('http://192.168.65.77:3000/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,3 +52,5 @@ async function submitLogin() {
         resultDiv.style.color = color;
     }
 }
+
+//document.getElementById('SubmitLogin').addEventListener('click', submitLogin())

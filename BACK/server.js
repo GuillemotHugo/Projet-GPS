@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json()); // Utilisation de body-parser pour parser les requêtes JSON
 app.use(cors()); // Middleware CORS pour les requêtes cross-origin
-const port = process.env.PORT || 3000; // Définition du port
+const port = 3000; // Définition du port
 
 // CONNEXION À LA BASE DE DONNÉES
 const db = mysql.createConnection({
@@ -52,7 +52,7 @@ app.post('/register', async (req, res) => {
     db.query(userExistsQuery, [identifiant], async (err, results) => {
       if (err) {
         console.error('Erreur lors de la vérification de l\'existence de l\'utilisateur :', err);
-        return res.status(500).json({ error: 'Erreur interne du serveur.' });
+        return res.status(500).json({ error: 'Erreur interne du serveur.1' });
       }
 
       if (results.length > 0) {
@@ -66,7 +66,7 @@ app.post('/register', async (req, res) => {
       db.query(insertUserQuery, [identifiant, hashedPassword, userUUID], (insertErr) => {
         if (insertErr) {
           console.error('Erreur lors de l\'enregistrement de l\'utilisateur :', insertErr);
-          return res.status(500).json({ error: 'Erreur interne du serveur.' });
+          return res.status(500).json({ error: 'Erreur interne du serveur.2' });
         }
 
         res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
@@ -75,7 +75,7 @@ app.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement de l\'utilisateur :', error);
-    res.status(500).json({ error: 'Erreur interne du serveur.' });
+    res.status(500).json({ error: 'Erreur interne du serveur.3' });
   }
 });
 

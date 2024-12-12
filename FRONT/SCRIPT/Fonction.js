@@ -19,21 +19,23 @@ function displayButtons() {
     var divLogin = document.getElementById('Login');
     var divRegister = document.getElementById('Register');
     var divLogout = document.getElementById('Logout');
-    var divAddProject = document.getElementById('addprojet');
     var divUsernameConnected = document.getElementById('UsernameConnected');
+    var divMainPage = document.getElementById('MainPage');
 
     if (cookieExists) {
         divLogin.style.display = 'none';
         divRegister.style.display = 'none';
         divLogout.style.display = 'block';
-        divUsernameConnected.style.display = 'none';
-
+        divUsernameConnected.style.display = 'block'; 
+        divMainPage.style.display = 'block'; 
         console.log('Cookie existe');
     } else {
         divLogin.style.display = 'block';
         divRegister.style.display = 'block';
         divLogout.style.display = 'none';
-        divUsernameConnected.style.display = 'none';
+        divUsernameConnected.style.display = 'none'; 
+        divMainPage.style.display = 'none'; 
         console.log('Cookie existe pas');
     }
 }
+

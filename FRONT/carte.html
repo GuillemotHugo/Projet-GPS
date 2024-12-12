@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>OpenStreetMap Centered on Amiens</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel='stylesheet' type='text/css' media='screen' href='carte.css'>
+
+</head>
+
+<body>
+
+  <div id="coordinates">
+    <label for="latitude">Latitude:</label>
+    <input type="text" id="latitude" placeholder="Latitude" />
+    <label for="longitude">Longitude:</label>
+    <input type="text" id="longitude" placeholder="Longitude" />
+    <button id="addMarkerBtn"> Ajoutez marqueur </button>
+  </div>
+  
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="SCRIPT/map.js"></script>
+
+</body>
+
+</html>

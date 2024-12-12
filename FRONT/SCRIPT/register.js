@@ -15,7 +15,7 @@ const submitRegister = async () => {
     };
 
     try {
-        const response = await fetch('http://192.168.65.211:3000/register', {
+        const response = await fetch('http://192.168.65.77:3000/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
